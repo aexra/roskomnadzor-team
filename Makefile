@@ -2,7 +2,7 @@ WORKDIR=./src
 PYTHON=python3
 
 check:
-	@$(PYTHON) $(WORKDIR)/main.py
+	@$(PYTHON) $(WORKDIR)/main.py $(PID)
 
 TEST_IMAGE_PUBLISHER=rkn
 TEST_IMAGE_APP_NAME=ddg-test
@@ -23,6 +23,7 @@ test:
 		-v ./log:$(LOG_DIR) \
 		-v ./Makefile:$(MAKEDIR)/Makefile \
 		-e LOG_DIR=$(LOG_DIR) \
+		-e PID=$(PID) \
 		$(TEST_IMAGE_PUBLISHER)/$(TEST_IMAGE_APP_NAME):$(TEST_IMAGE_VERSION) \
 		bash -c "make -C $(MAKEDIR)"
 

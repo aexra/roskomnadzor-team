@@ -2,6 +2,8 @@ import logging
 import sys, os
 from datetime import datetime
 
+from metric.process_metrics import get_process_metrics
+
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s]: %(message)s",
@@ -12,4 +14,5 @@ logging.basicConfig(
 )
 
 if __name__ == "__main__":
-    pass
+    pid = sys.argv[1]
+    get_process_metrics(pid)
