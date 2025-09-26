@@ -1,12 +1,10 @@
 FROM ubuntu:22.04
 
-RUN apt update && \
-    apt install -y \
-        python3 \
-        pip \
-        make
+COPY ./assets/scripts/apt-install.sh /opt
+COPY ./assets/requirements.txt /opt
 
-COPY ./requirements.txt /opt
+RUN /opt/apt-install.sh && \
+    rm /opt/apt-install.sh
 
 RUN pip3 install -r /opt/requirements.txt && \
     rm /opt/requirements.txt
