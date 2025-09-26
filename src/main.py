@@ -2,8 +2,6 @@ import logging
 import sys, os
 from datetime import datetime
 
-from metric.process_metrics import get_process_metrics
-
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 log_filename = f"log/{timestamp}.log"
 
@@ -18,4 +16,3 @@ logging.basicConfig(
 
 if __name__ == "__main__":
     pid = sys.argv[1]
-    get_process_metrics(pid)
