@@ -1,22 +1,27 @@
 WORKDIR=./src
+PYTHON=python3
 
 check:
-	@python3 $(WORKDIR)/main.py
+	@$(PYTHON) $(WORKDIR)/main.py
 
 TEST_IMAGE_PUBLISHER=rkn
 TEST_IMAGE_APP_NAME=ddg-test
 TEST_IMAGE_VERSION=1.0
+
+MAKEDIR=/opt
+SRC_DIR=$(MAKEDIR)/src
+LOG_DIR=$(MAKEDIR)/log
 
 build:
 	@docker build -t $(TEST_IMAGE_PUBLISHER)/$(TEST_IMAGE_APP_NAME):$(TEST_IMAGE_VERSION) tests
 
 test:
 	@docker run --rm \
-		-v ./src:/opt/src \
-		-v ./log:/opt/log \
-		-v ./Makefile:/opt/Makefile \
+		-v ./src:$(SRC_DIR) \
+		-v ./log:$(LOG_DIR) \
+		-v ./Makefile:$(MAKEDIR)/Makefile \
 		$(TEST_IMAGE_PUBLISHER)/$(TEST_IMAGE_APP_NAME):$(TEST_IMAGE_VERSION) \
-		bash -c "WORKDIR=/opt/src make -C /opt"
+		bash -c "make -C $(MAKEDIR)"
 
 test-loads:
 	@echo Not implemented yet
