@@ -4,12 +4,15 @@ from datetime import datetime
 
 from metric.process_metrics import get_process_metrics
 
+timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+log_filename = f"log/{timestamp}.log"
+
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s]: %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler(f"log/{datetime.now()}.log", encoding="utf-8")
+        logging.FileHandler(log_filename, encoding="utf-8")
     ]
 )
 
