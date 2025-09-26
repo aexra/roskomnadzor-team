@@ -1,22 +1,34 @@
 import os
-from logging import info
+import sys
+import pprint
+
+def find_pid_by_name(process_name):
+    pids = []
+    for pid in os.listdir("/proc"):
+        if not pid.isdigit():
+            continue
+        try:
+            with open(f"/proc/{pid}/comm", "r") as f:
+                comm = f.read().strip()
+                if comm.lower() == process_name.lower():
+                    pids.append(pid)
+        except (FileNotFoundError, PermissionError):
+            continue
+    return pids
 
 def get_process_metrics(pid):
     proc_dir = f"/proc/{pid}"
     if not os.path.exists(proc_dir):
         raise ValueError(f"Процесс с PID {pid} не найден или /proc недоступен.")
-
     metrics = {
         'pid': pid,
-        'available_files': os.listdir(proc_dir)  # Все файлы/директории в /proc/<pid>/
+        'available_files': os.listdir(proc_dir)
     }
-
-    # Парсинг /proc/<pid>/stat (основные статусы процесса)
     try:
         with open(f"{proc_dir}/stat", 'r') as f:
             stat_data = f.read().strip().split()
             metrics['stat'] = {
-                'comm': stat_data[1][1:-1],  # Имя команды (без скобок)
+                'comm': stat_data[1][1:-1],
                 'state': stat_data[2],
                 'ppid': int(stat_data[3]),
                 'pgrp': int(stat_data[4]),
@@ -59,12 +71,9 @@ def get_process_metrics(pid):
                 'delayacct_blkio_ticks': int(stat_data[41]),
                 'guest_time': int(stat_data[42]),
                 'cguest_time': int(stat_data[43]),
-                # Дополнительные поля, если есть (зависит от версии ядра)
             }
     except FileNotFoundError:
         pass
-
-    # Парсинг /proc/<pid>/status (детальный статус, память, группы и т.д.)
     try:
         with open(f"{proc_dir}/status", 'r') as f:
             for line in f:
@@ -73,24 +82,20 @@ def get_process_metrics(pid):
                     metrics[key.strip()] = value.strip()
     except FileNotFoundError:
         pass
-
-    # Парсинг /proc/<pid>/statm (статистика памяти)
     try:
         with open(f"{proc_dir}/statm", 'r') as f:
             statm_data = f.read().strip().split()
             metrics['statm'] = {
-                'size': int(statm_data[0]),      # Общий размер в страницах
-                'resident': int(statm_data[1]),  # Резидентная память
-                'share': int(statm_data[2]),     # Общая память
-                'trs': int(statm_data[3]),       # Text (code)
-                'drs': int(statm_data[4]),       # Data + stack
-                'lrs': int(statm_data[5]),       # Lib
-                'dt': int(statm_data[6]),        # Dirty pages
+                'size': int(statm_data[0]),
+                'resident': int(statm_data[1]),
+                'share': int(statm_data[2]),
+                'trs': int(statm_data[3]),
+                'drs': int(statm_data[4]),
+                'lrs': int(statm_data[5]),
+                'dt': int(statm_data[6]),
             }
     except FileNotFoundError:
         pass
-
-    # Парсинг /proc/<pid>/io (I/O статистика)
     try:
         with open(f"{proc_dir}/io", 'r') as f:
             for line in f:
@@ -99,15 +104,13 @@ def get_process_metrics(pid):
                     metrics[key.strip()] = int(value.strip())
     except FileNotFoundError:
         pass
-
-    # Парсинг /proc/<pid>/limits (лимит ресурсов)
     try:
         with open(f"{proc_dir}/limits", 'r') as f:
             limits = {}
-            next(f)  # Пропуск заголовка
+            next(f)
             for line in f:
                 parts = line.split()
-                limit_name = ' '.join(parts[:-3])  # Название лимита
+                limit_name = ' '.join(parts[:-3])
                 soft = parts[-3]
                 hard = parts[-2]
                 units = parts[-1] if len(parts) > 3 else ''
@@ -115,21 +118,51 @@ def get_process_metrics(pid):
             metrics['limits'] = limits
     except FileNotFoundError:
         pass
-
-    # Дополнительные простые метрики
     try:
         metrics['cmdline'] = open(f"{proc_dir}/cmdline", 'r').read().strip().split('\x00')[:-1]
     except FileNotFoundError:
         pass
-
     try:
-        metrics['num_fds'] = len(os.listdir(f"{proc_dir}/fd"))  # Количество открытых файловых дескрипторов
+        metrics['num_fds'] = len(os.listdir(f"{proc_dir}/fd"))
     except FileNotFoundError:
         pass
-
     try:
-        metrics['num_tasks'] = len(os.listdir(f"{proc_dir}/task"))  # Количество потоков/тасков
+        metrics['num_tasks'] = len(os.listdir(f"{proc_dir}/task"))
     except FileNotFoundError:
         pass
+    return metrics
 
-    info(metrics)
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Использование: python process_metrics_by_name.py <PID или имя процесса>")
+        sys.exit(1)
+    input_arg = sys.argv[1]
+    try:
+        if input_arg.isdigit():
+            pid = input_arg
+        else:
+            pids = find_pid_by_name(input_arg)
+            if not pids:
+                print(f"Процесс с именем '{input_arg}' не найден.")
+                sys.exit(1)
+            elif len(pids) > 1:
+                print(f"Найдено несколько процессов с именем '{input_arg}':")
+                for i, pid in enumerate(pids, 1):
+                    try:
+                        with open(f"/proc/{pid}/cmdline", "r") as f:
+                            cmdline = f.read().replace('\x00', ' ').strip()
+                        print(f"{i}. PID: {pid}, Командная строка: {cmdline}")
+                    except FileNotFoundError:
+                        print(f"{i}. PID: {pid}, Командная строка: недоступна")
+                choice = input("Введите номер процесса (1, 2, ...): ")
+                if not choice.isdigit() or int(choice) < 1 or int(choice) > len(pids):
+                    print("Некорректный выбор.")
+                    sys.exit(1)
+                pid = pids[int(choice) - 1]
+            else:
+                pid = pids[0]
+        metrics = get_process_metrics(pid)
+        print(f"Метрики для процесса с PID {pid}:")
+        pprint.pprint(metrics)
+    except Exception as e:
+        print(f"Ошибка: {e}")
