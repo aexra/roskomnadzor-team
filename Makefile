@@ -24,12 +24,12 @@ test:
 		bash -c "make -C $(MAKEDIR)"
 
 test-exec:
-	@docker run --rm \
+	@docker run --rm -d \
 		-v ./src:$(SRC_DIR) \
 		-v ./log:$(LOG_DIR) \
 		-v ./Makefile:$(MAKEDIR)/Makefile \
 		$(TEST_IMAGE_PUBLISHER)/$(TEST_IMAGE_APP_NAME):$(TEST_IMAGE_VERSION) \
-		bash -c "make -C $(MAKEDIR)"
+		tail -f /dev/null
 
 test-loads:
 	@echo Not implemented yet
