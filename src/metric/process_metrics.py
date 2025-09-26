@@ -1,6 +1,5 @@
 import os
-import sys
-import pprint
+from logging import info
 
 def get_process_metrics(pid):
     proc_dir = f"/proc/{pid}"
@@ -133,16 +132,4 @@ def get_process_metrics(pid):
     except FileNotFoundError:
         pass
 
-    return metrics
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Использование: python process_metrics.py <PID>")
-        sys.exit(1)
-    
-    pid = sys.argv[1]
-    try:
-        metrics = get_process_metrics(pid)
-        pprint.pprint(metrics)
-    except Exception as e:
-        print(f"Ошибка: {e}")
+    info(metrics)
