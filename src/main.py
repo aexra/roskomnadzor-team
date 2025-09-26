@@ -12,6 +12,4 @@ logging.basicConfig(
 )
 
 if __name__ == "__main__":
-    from logging import info
-    info("Abobabebebe")
-    print("nolog")
+    pass
