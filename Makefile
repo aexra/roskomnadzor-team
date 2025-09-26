@@ -23,5 +23,13 @@ test:
 		$(TEST_IMAGE_PUBLISHER)/$(TEST_IMAGE_APP_NAME):$(TEST_IMAGE_VERSION) \
 		bash -c "make -C $(MAKEDIR)"
 
+test-exec:
+	@docker run --rm \
+		-v ./src:$(SRC_DIR) \
+		-v ./log:$(LOG_DIR) \
+		-v ./Makefile:$(MAKEDIR)/Makefile \
+		$(TEST_IMAGE_PUBLISHER)/$(TEST_IMAGE_APP_NAME):$(TEST_IMAGE_VERSION) \
+		bash -c "make -C $(MAKEDIR)"
+
 test-loads:
 	@echo Not implemented yet
