@@ -1,8 +1,7 @@
 WORKDIR=./src
 
 check:
-	@echo "Starting analyze..."
-	@python $(WORKDIR)/main.py
+	@python3 $(WORKDIR)/main.py
 
 TEST_IMAGE_PUBLISHER=rkn
 TEST_IMAGE_APP_NAME=ddg-test
@@ -15,8 +14,9 @@ test:
 	@docker run --rm \
 		-v ./src:/opt/src \
 		-v ./log:/opt/log \
+		-v ./Makefile:/opt/Makefile \
 		$(TEST_IMAGE_PUBLISHER)/$(TEST_IMAGE_APP_NAME):$(TEST_IMAGE_VERSION) \
-		python3 /opt/src/main.py
+		bash -c "WORKDIR=/opt/src make -C /opt"
 
 test-loads:
 	@echo Not implemented yet
