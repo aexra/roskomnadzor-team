@@ -28,7 +28,7 @@ if __name__ == "__main__":
     data = process_metrics.get_process_metrics(pid)
     
     for importer, modname, ispkg in pkgutil.iter_modules(metrics.__path__, metrics.__name__ + "."):
-        if modname.endswith(".process_metrics"):
+        if modname.endswith(".process_metrics") or modname.endswith(".Metric"):
             continue
 
         try:
