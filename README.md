@@ -17,8 +17,9 @@
 ## Prerequisites
 
 Для исполнения программы на хосте должны быть установлены следующие пакеты:
-- python3
+- git
 - make
+- python3
 
 ```bash
 # Ubuntu 22.04
@@ -47,3 +48,27 @@ make test
 # Windows
 make test PYTHON=python
 ```
+
+### Реальный кейс
+
+Скриптом эмулируем утечку файловых дескрипторов при установленном ulimit unlimited:
+
+```py
+import os
+files = []
+for i in range(2000):
+    try:
+        f = open(f"/tmp/test_{i}.txt", "w")
+        files.append(f)
+    except:
+        break
+input("Press Enter to close files...")
+```
+
+Вызов main.py сообщает пользователю об утечке и рекомендует использовать `ulimit -n 65535`:
+
+![](./tests/assets/before.png)
+
+Использовав предложенное решение и перезапустив приложение, сообщение об этой ошибке больше не появляется:
+
+![](./tests/assets/after.png)
