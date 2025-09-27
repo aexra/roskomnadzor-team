@@ -42,11 +42,4 @@ test-loads:
 	@echo Not implemented yet
 
 test0:
-	@$(PYTHON) -c " \
-import os, time \
-pid = os.fork() \
-if pid == 0: \
-    os._exit(0) \
-else: \
-    time.sleep(60) \
-" &
+	@$(PYTHON) -c ./tests/assets/scripts/test.py
