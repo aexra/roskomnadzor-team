@@ -42,4 +42,4 @@ test-loads:
 	@echo Not implemented yet
 
 test0:
-	@$(PYTHON) -c ./tests/assets/scripts/test.py
+	@$(PYTHON) tests/assets/scripts/test.py
