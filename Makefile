@@ -3,7 +3,8 @@ PYTHON=python3
 
 check:
 	@-mkdir -p log
-	@$(PYTHON) $(WORKDIR)/main.py $(PID)
+# 	@$(PYTHON) $(WORKDIR)/main.py $(PID)
+	@$(PYTHON) $(WORKDIR)/main.py
 
 TEST_IMAGE_PUBLISHER=rkn
 TEST_IMAGE_APP_NAME=ddg-test
