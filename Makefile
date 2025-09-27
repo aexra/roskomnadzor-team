@@ -2,6 +2,7 @@ WORKDIR=./src
 PYTHON=python3
 
 check:
+	@-mkdir log
 	@$(PYTHON) $(WORKDIR)/main.py $(PID)
 
 TEST_IMAGE_PUBLISHER=rkn
