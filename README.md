@@ -43,10 +43,10 @@ python3 src/main.py <PID/name>
 
 ```bash
 # Linux
-make test
+make test PID=<pid/name>
 
 # Windows
-make test PYTHON=python
+make test PID=<pid/name> PYTHON=python
 ```
 
 ### Реальный кейс
