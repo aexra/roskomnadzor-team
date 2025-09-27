@@ -41,5 +41,5 @@ test-exec:
 test-loads:
 	@echo Not implemented yet
 
-test0:
-	@$(PYTHON) tests/assets/scripts/test.py
+test-case:
+	@$(PYTHON) tests/assets/scripts/test$(CASE).py
