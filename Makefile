@@ -3,8 +3,7 @@ PYTHON=python3
 
 check:
 	@-mkdir -p log
-# 	@$(PYTHON) $(WORKDIR)/main.py $(PID)
-	@$(PYTHON) $(WORKDIR)/main.py
+	@$(PYTHON) $(WORKDIR)/main.py $(PID)
 
 TEST_IMAGE_PUBLISHER=rkn
 TEST_IMAGE_APP_NAME=ddg-test
@@ -29,14 +28,5 @@ test:
 		$(TEST_IMAGE_PUBLISHER)/$(TEST_IMAGE_APP_NAME):$(TEST_IMAGE_VERSION) \
 		bash -c "make -C $(MAKEDIR)"
 
-test-exec:
-	@-docker run --rm -d --name $(TEST_CONTAINER_NAME) \
-		-v ./src:$(SRC_DIR) \
-		-v ./log:$(LOG_DIR) \
-		-v ./Makefile:$(MAKEDIR)/Makefile \
-		$(TEST_IMAGE_PUBLISHER)/$(TEST_IMAGE_APP_NAME):$(TEST_IMAGE_VERSION) \
-		tail -f /dev/null
-	@docker exec -it $(TEST_CONTAINER_NAME) bash
-
 test-loads:
-	@echo Not implemented yet
+	@echo Not implemented
