@@ -1,7 +1,21 @@
 import logging
 import sys, os
+from metrics import process_metrics, \
+    fd_leak, \
+    high_cpu_usage, \
+    high_page_faults, \
+    io_bottleneck, \
+    library_memory_usage, \
+    memory_leak_detection, \
+    memory_overcommit, \
+    priority_inversion, \
+    resource_limits_hit, \
+    scheduling_latency, \
+    signal_overload, \
+    stack_overflow_risk, \
+    thread_concurrency_issue, \
+    zombie_processes
 from datetime import datetime
-from metrics import process_metrics, context_switch_overhead
 
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 log_filename = f"log/{timestamp}.log"
@@ -18,6 +32,20 @@ logging.basicConfig(
 if __name__ == "__main__":
     pid = sys.argv[1]
     metrics = process_metrics.get_process_metrics(pid)
-    
-    for metric in [context_switch_overhead]:
+    for metric in [
+        fd_leak,
+        high_cpu_usage,
+        high_page_faults,
+        io_bottleneck,
+        library_memory_usage,
+        memory_leak_detection,
+        memory_overcommit,
+        priority_inversion,
+        # resource_limits_hit,
+        scheduling_latency,
+        signal_overload,
+        stack_overflow_risk,
+        thread_concurrency_issue,
+        zombie_processes
+    ]:
         metric.analyze_metrics(metrics)
