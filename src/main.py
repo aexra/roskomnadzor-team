@@ -1,6 +1,7 @@
 import logging
 import sys, os
 from datetime import datetime
+from metrics import process_metrics, context_switch_overhead
 
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 log_filename = f"log/{timestamp}.log"
@@ -16,3 +17,7 @@ logging.basicConfig(
 
 if __name__ == "__main__":
     pid = sys.argv[1]
+    metrics = process_metrics.get_process_metrics(pid)
+    
+    for metric in [context_switch_overhead]:
+        metric.analyze_metrics(metrics)
