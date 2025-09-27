@@ -1,4 +1,4 @@
-import process_metrics as pm
+import sys
 from logging import info, warning, error
 
 def analyze_metrics(metrics):
