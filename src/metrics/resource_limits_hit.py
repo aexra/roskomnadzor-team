@@ -1,15 +1,16 @@
 import process_metrics as pm
+from logging import info, warning, error
 
 def analyze_metrics(metrics):
     limits = metrics.get('limits', {})
     if 'Max processes' in limits and int(limits['Max processes']['soft']) < 1024:
-        print("Проблема: Достигнуты лимиты ресурсов обнаружены. Рекомендации: Увеличьте лимиты в /etc/security/limits.conf (например, * soft nproc 65535). Примените: ulimit -u 65535 или prlimit --pid <pid> --nofile=65535:65535. Проверьте: cat /proc/<pid>/limits.")
+        warning("Проблема: Достигнуты лимиты ресурсов обнаружены. Рекомендации: Увеличьте лимиты в /etc/security/limits.conf (например, * soft nproc 65535). Примените: ulimit -u 65535 или prlimit --pid <pid> --nofile=65535:65535. Проверьте: cat /proc/<pid>/limits.")
     else:
-        print("Проблема: Достигнуты лимиты ресурсов не обнаружены.")
+        info("Проблема: Достигнуты лимиты ресурсов не обнаружены.")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Использование: python resource_limits_hit.py <PID или имя процесса>")
+        error("Использование: python resource_limits_hit.py <PID или имя процесса>")
         sys.exit(1)
     input_arg = sys.argv[1]
     pid = input_arg if input_arg.isdigit() else pm.find_pid_by_name(input_arg)[0]
