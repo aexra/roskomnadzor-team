@@ -1,5 +1,5 @@
 import logging
-import sys, os
+import sys
 from datetime import datetime
 import pkgutil
 import importlib
