@@ -17,6 +17,7 @@ logging.basicConfig(
 )
 
 def find_pids_by_name(process_name):
+    import os
     pids = []
     for pid in os.listdir("/proc"):
         if not pid.isdigit():
